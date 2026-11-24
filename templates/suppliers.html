@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supplier Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Supplier Management</h1>
+        <p>Add and manage warehouse suppliers and their delivery details.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category_type, message in messages %}
+                <div class="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <h2 class="section-title">Add New Supplier</h2>
+
+        <div class="activity-card">
+
+            <form method="POST" action="{{ url_for('suppliers') }}" onsubmit="return validateSupplierForm(this)">
+
+                <label>Supplier Name</label>
+                <input type="text" name="supplier_name"
+                       placeholder="Enter supplier name" required>
+
+                <br><br>
+
+                <label>Contact Person</label>
+                <input type="text" name="contact_person"
+                       placeholder="Enter contact person">
+
+                <br><br>
+
+                <label>Phone Number</label>
+                <input type="tel" name="phone"
+                       placeholder="Enter 10-digit phone number"
+                       maxlength="10" minlength="10"
+                       pattern="[0-9]{10}"
+                       inputmode="numeric" required>
+
+                <br><br>
+
+                <label>Email</label>
+                <input type="email" name="email"
+                       placeholder="example@gmail.com"
+                       pattern="[A-Za-z0-9._%+-]+@gmail\.com"
+                       title="Email must end with @gmail.com"
+                       required>
+
+                <br><br>
+
+                <label>Address</label>
+                <input type="text" name="address"
+                       placeholder="Enter supplier address">
+
+                <br><br>
+
+                <label>Delivery Lead Time (Days)</label>
+                <input type="number" name="delivery_lead_time"
+                       min="0" placeholder="Example: 5" required>
+
+                <br><br>
+
+                <button type="submit">Add Supplier</button>
+
+            </form>
+
+        </div>
+
+        <h2 class="section-title">Registered Suppliers</h2>
+
+        <div class="activity-card">
+
+            <div class="activity-header"
+                 style="grid-template-columns: 1.2fr 1fr 1fr 0.7fr 1fr;">
+                <span>Supplier Name</span>
+                <span>Contact</span>
+                <span>Email</span>
+                <span>Lead Time</span>
+                <span>Actions</span>
+            </div>
+
+            {% for supplier in suppliers %}
+
+            <div class="activity-row"
+                 style="grid-template-columns: 1.2fr 1fr 1fr 0.7fr 1fr; align-items:center;">
+
+                <span>{{ supplier.supplier_name }}</span>
+                <span>{{ supplier.phone or 'Not provided' }}</span>
+                <span>{{ supplier.email or 'Not provided' }}</span>
+                <span>{{ supplier.delivery_lead_time }} days</span>
+
+                <span style="display:flex; gap:10px;">
+
+                    <a href="{{ url_for('edit_supplier', supplier_id=supplier.supplier_id) }}">
+                        Edit
+                    </a>
+
+                    <form method="POST"
+                          action="{{ url_for('delete_supplier', supplier_id=supplier.supplier_id) }}"
+                          onsubmit="return confirm('Are you sure you want to delete this supplier?');">
+
+                        <button type="submit">Delete</button>
+
+                    </form>
+
+                </span>
+
+            </div>
+
+            {% else %}
+
+            <div class="activity-row">
+                <span>No suppliers added yet.</span>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+function validateSupplierForm(form) {
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+        alert("Please enter a valid 10-digit phone number.");
+        form.phone.focus();
+        return false;
+    }
+
+    if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email)) {
+        alert("Please enter a valid Gmail address ending with @gmail.com.");
+        form.email.focus();
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

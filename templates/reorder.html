@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Reorder Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Smart Reorder Management</h1>
+        <p>Identify low-stock products and calculate suggested reorder quantities.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="dashboard-cards">
+
+            <div class="card">
+                <h3>Products Requiring Reorder</h3>
+                <h2>{{ reorder_summary.total_products }}</h2>
+                <p>Products below minimum stock</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Suggested Quantity</h3>
+                <h2>{{ reorder_summary.total_reorder_quantity }}</h2>
+                <p>Units recommended for replenishment</p>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">Reorder Recommendations</h2>
+
+        <div class="activity-card">
+
+            <div class="activity-header"
+                 style="grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr 1fr;">
+                <span>Product</span>
+                <span>Current Stock</span>
+                <span>Minimum Stock</span>
+                <span>Suggested Order</span>
+                <span>Supplier</span>
+                <span>Lead Time</span>
+            </div>
+
+            {% for product in reorder_products %}
+
+            <div class="activity-row"
+                 style="grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr 1fr;">
+
+                <span>{{ product.product_name }}</span>
+
+                <span>{{ product.current_stock }}</span>
+
+                <span>{{ product.minimum_stock }}</span>
+
+                <span><strong>{{ product.suggested_quantity }}</strong></span>
+
+                <span>{{ product.supplier_name or 'Not Assigned' }}</span>
+
+                <span>
+                    {% if product.delivery_lead_time is not none %}
+                        {{ product.delivery_lead_time }} days
+                    {% else %}
+                        Not Available
+                    {% endif %}
+                </span>
+
+            </div>
+
+            {% else %}
+
+            <p style="padding: 20px;">
+                Great! No products currently require reordering.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+        <h2 class="section-title">How Reorder Quantity Is Calculated</h2>
+
+        <div class="activity-card">
+
+            <p>
+                The system recommends enough stock to bring the product
+                quantity up to twice its minimum stock level.
+            </p>
+
+            <br>
+
+            <p><strong>Formula:</strong></p>
+
+            <p>
+                Suggested Reorder Quantity =
+                (Minimum Stock × 2) − Current Stock
+            </p>
+
+            <br>
+
+            <p>
+                Example: Minimum stock = 20 units and current stock = 5 units.
+            </p>
+
+            <p>
+                Suggested reorder = (20 × 2) − 5 = 35 units.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

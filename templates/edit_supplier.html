@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Supplier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Edit Supplier</h1>
+        <p>Update supplier contact and delivery information.</p>
+
+        <h2 class="section-title">Supplier Information</h2>
+
+        <div class="activity-card">
+
+            <form method="POST" onsubmit="return validateSupplierForm(this)">
+
+                <label>Supplier Name</label>
+                <input type="text" name="supplier_name"
+                       value="{{ supplier.supplier_name }}" required>
+
+                <br><br>
+
+                <label>Contact Person</label>
+                <input type="text" name="contact_person"
+                       value="{{ supplier.contact_person or '' }}">
+
+                <br><br>
+
+                <label>Phone Number</label>
+                <input type="tel" name="phone"
+                       value="{{ supplier.phone or '' }}"
+                       placeholder="Enter 10-digit phone number"
+                       maxlength="10" minlength="10"
+                       pattern="[0-9]{10}"
+                       inputmode="numeric" required>
+
+                <br><br>
+
+                <label>Email</label>
+                <input type="email" name="email"
+                       value="{{ supplier.email or '' }}"
+                       placeholder="example@gmail.com"
+                       pattern="[A-Za-z0-9._%+-]+@gmail\.com"
+                       title="Email must end with @gmail.com"
+                       required>
+
+                <br><br>
+
+                <label>Address</label>
+                <input type="text" name="address"
+                       value="{{ supplier.address or '' }}">
+
+                <br><br>
+
+                <label>Delivery Lead Time (Days)</label>
+                <input type="number" name="delivery_lead_time"
+                       min="0" value="{{ supplier.delivery_lead_time }}" required>
+
+                <br><br>
+
+                <button type="submit">Save Changes</button>
+
+                <a href="{{ url_for('suppliers') }}">Cancel</a>
+
+            </form>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+function validateSupplierForm(form) {
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+        alert("Please enter a valid 10-digit phone number.");
+        form.phone.focus();
+        return false;
+    }
+
+    if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email)) {
+        alert("Please enter a valid Gmail address ending with @gmail.com.");
+        form.email.focus();
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

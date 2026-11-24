@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Demand Prediction</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>AI Demand Prediction</h1>
+        <p>Predict future product demand using historical sales data.</p>
+
+        <h2 class="section-title">Select Product</h2>
+
+        <div class="activity-card">
+
+            <form method="POST">
+
+                <select name="product_id" required>
+                    <option value="">Choose Product</option>
+
+                    {% for product in products %}
+                    <option value="{{ product.product_id }}"
+                        {% if selected_product == product.product_id %}selected{% endif %}>
+                        {{ product.product_name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+                <br><br>
+
+                <button type="submit">Generate Prediction</button>
+
+            </form>
+
+        </div>
+
+        {% if prediction %}
+
+            {% if prediction.error %}
+
+                <div class="activity-card">
+                    <h3>Prediction Unavailable</h3>
+                    <p>{{ prediction.error }}</p>
+                </div>
+
+            {% else %}
+
+                <h2 class="section-title">Prediction Overview</h2>
+
+                <div class="dashboard-cards">
+
+                    <div class="card">
+                        <h3>Average Predicted Daily Demand</h3>
+                        <h2>{{ prediction.average_demand }}</h2>
+                        <p>Units per day</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Previous Average Demand</h3>
+                        <h2>{{ prediction.previous_average }}</h2>
+                        <p>Units per day</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Demand Trend</h3>
+                        <h2>{{ prediction.trend }}</h2>
+                        <p>Based on historical sales</p>
+                    </div>
+
+                </div>
+
+                <h2 class="section-title">7-Day Demand Forecast</h2>
+
+                <div class="activity-card">
+
+                    <canvas
+                        id="forecastChart"
+                        data-forecast='{{ prediction.forecast | tojson | forceescape }}'>
+                    </canvas>
+
+                </div>
+
+                <h2 class="section-title">Forecast Details</h2>
+
+                <div class="activity-card">
+
+                    <div class="activity-header"
+                         style="grid-template-columns: 1fr 1fr;">
+
+                        <span>Date</span>
+                        <span>Predicted Demand</span>
+
+                    </div>
+
+                    {% for item in prediction.forecast %}
+
+                    <div class="activity-row"
+                         style="grid-template-columns: 1fr 1fr;">
+
+                        <span>{{ item.date }}</span>
+                        <span>{{ item.predicted_demand }} units</span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+<script>
+
+    const chartElement = document.getElementById('forecastChart');
+
+    if (chartElement) {
+
+        const forecastData = JSON.parse(
+            chartElement.dataset.forecast
+        );
+
+        new Chart(chartElement, {
+
+            type: 'line',
+
+            data: {
+
+                labels: forecastData.map(item => item.date),
+
+                datasets: [{
+                    label: 'Predicted Demand',
+
+                    data: forecastData.map(
+                        item => item.predicted_demand
+                    ),
+
+                    borderColor: '#193D32',
+                    backgroundColor: 'rgba(25, 61, 50, 0.10)',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Predicted Units'
+                        }
+                    }
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

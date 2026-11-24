@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Stock Management</h1>
+        <p>Manage incoming stock, outgoing stock and stock history.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <h2 class="section-title">Record Stock Movement</h2>
+
+        <div class="activity-card">
+
+            <form method="POST">
+
+                <p>Select Product</p>
+                <select name="product_id" required>
+                    <option value="">Choose Product</option>
+
+                    {% for product in products %}
+                    <option value="{{ product.product_id }}">
+                        {{ product.product_name }}
+                        (Available: {{ product.current_stock }})
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <br><br>
+
+                <p>Movement Type</p>
+                <select name="movement_type" required>
+                    <option value="IN">Stock IN</option>
+                    <option value="OUT">Stock OUT</option>
+                </select>
+
+                <br><br>
+
+                <p>Quantity</p>
+                <input type="number" name="quantity" min="1" required>
+
+                <br><br>
+
+                <p>Remarks</p>
+                <input type="text" name="remarks"
+                       placeholder="Enter reason for stock movement">
+
+                <br><br>
+
+                <button type="submit">Update Stock</button>
+
+            </form>
+
+        </div>
+
+        <h2 class="section-title">Current Stock</h2>
+
+        <div class="activity-card">
+
+            <div class="activity-header"
+                 style="grid-template-columns: 2fr 1fr;">
+                <span>Product</span>
+                <span>Available Quantity</span>
+            </div>
+
+            {% for product in products %}
+            <div class="activity-row"
+                 style="grid-template-columns: 2fr 1fr;">
+                <span>{{ product.product_name }}</span>
+                <span>{{ product.current_stock }}</span>
+            </div>
+            {% else %}
+            <p>No products available.</p>
+            {% endfor %}
+
+        </div>
+
+        <h2 class="section-title">Stock Movement History</h2>
+
+        <div class="activity-card">
+
+            <div class="activity-header"
+                 style="grid-template-columns: 1.5fr 1fr 1fr 1.5fr;">
+                <span>Product</span>
+                <span>Movement</span>
+                <span>Quantity</span>
+                <span>Date</span>
+            </div>
+
+            {% for movement in movements %}
+            <div class="activity-row"
+                 style="grid-template-columns: 1.5fr 1fr 1fr 1.5fr;">
+                <span>{{ movement.product_name }}</span>
+                <span>{{ movement.movement_type }}</span>
+                <span>{{ movement.quantity }}</span>
+                <span>{{ movement.movement_date }}</span>
+            </div>
+            {% else %}
+            <p>No stock movements recorded yet.</p>
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

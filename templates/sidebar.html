@@ -1,0 +1,53 @@
+<aside class="sidebar">
+
+    <h2>◇ WAREHOUSE</h2>
+    <p>MANAGEMENT SYSTEM</p>
+
+    <h4>WORKSPACE</h4>
+
+    <nav>
+
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+            Dashboard
+        </a>
+
+        <a href="/inventory" class="{% if request.path == '/inventory' %}active{% endif %}">
+            Inventory
+        </a>
+
+        <a href="/products" class="{% if request.path == '/products' or '/products/edit/' in request.path %}active{% endif %}">
+            Product Management
+        </a>
+
+        <a href="/categories" class="{% if request.path == '/categories' or '/categories/edit/' in request.path %}active{% endif %}">
+            Category Management
+        </a>
+
+        <a href="/suppliers" class="{% if request.path == '/suppliers' or '/suppliers/edit/' in request.path %}active{% endif %}">
+            Supplier Management
+        </a>
+
+        <a href="/sales" class="{% if request.path == '/sales' %}active{% endif %}">
+            Sales Management
+        </a>
+
+        <a href="/prediction" class="{% if request.path == '/prediction' %}active{% endif %}">
+            Demand Prediction
+        </a>
+
+        <a href="/reorder" class="{% if request.path == '/reorder' %}active{% endif %}">
+            Reorder Management
+        </a>
+
+        <a href="/reports" class="{% if request.path == '/reports' %}active{% endif %}">
+            Reports
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+        <p>● System Online</p>
+        <p>Admin Account</p>
+    </div>
+
+</aside>

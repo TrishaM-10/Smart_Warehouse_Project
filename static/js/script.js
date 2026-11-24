@@ -1,0 +1,1 @@
+console.log("Smart Warehouse Website Loaded Successfully!");

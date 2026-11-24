@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Warehouse Reports</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .report-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e8eee9;
+        }
+
+        .report-table th {
+            background: #edf3ee;
+            color: #193d32;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .healthy {
+            background: #e2f3e7;
+            color: #237a3b;
+        }
+
+        .low {
+            background: #fff1d6;
+            color: #a36a00;
+        }
+
+        .out {
+            background: #fde2e2;
+            color: #bd3030;
+        }
+
+        .empty-message {
+            padding: 20px;
+            color: #777;
+            text-align: center;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Reports & Analytics</h1>
+        <p>Understand warehouse performance through reports and insights.</p>
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="dashboard-cards">
+
+            <div class="card">
+                <h3>Total Products</h3>
+                <h2>{{ total_products }}</h2>
+                <p>Products recorded</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Sales</h3>
+                <h2>{{ total_sales }}</h2>
+                <p>Units sold</p>
+            </div>
+
+            <div class="card">
+                <h3>Inventory Value</h3>
+                <h2>₹{{ "%.2f"|format(inventory_value) }}</h2>
+                <p>Current stock value</p>
+            </div>
+
+            <div class="card">
+                <h3>Reorder Items</h3>
+                <h2>{{ reorder_items }}</h2>
+                <p>Need replenishment</p>
+            </div>
+
+        </div>
+
+
+        <!-- INVENTORY REPORT -->
+
+        <h2 class="section-title">Inventory Report</h2>
+
+        <div class="report-table-wrapper">
+
+            <table class="report-table">
+
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Current Stock</th>
+                        <th>Minimum Stock</th>
+                        <th>Unit Price</th>
+                        <th>Stock Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in inventory_report %}
+
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+
+                        <td>
+                            {{ item.category_name or 'Uncategorized' }}
+                        </td>
+
+                        <td>{{ item.current_stock }}</td>
+
+                        <td>{{ item.minimum_stock }}</td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(item.unit_price) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(item.stock_value) }}
+                        </td>
+
+                        <td>
+
+                            {% if item.current_stock == 0 %}
+
+                                <span class="status out">
+                                    Out of Stock
+                                </span>
+
+                            {% elif item.current_stock <= item.minimum_stock %}
+
+                                <span class="status low">
+                                    Low Stock
+                                </span>
+
+                            {% else %}
+
+                                <span class="status healthy">
+                                    Healthy
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7" class="empty-message">
+                            No inventory records available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- SALES REPORT -->
+
+        <h2 class="section-title">Sales Report</h2>
+
+        <div class="report-table-wrapper">
+
+            <table class="report-table">
+
+                <thead>
+                    <tr>
+                        <th>Sale Date</th>
+                        <th>Product</th>
+                        <th>Quantity Sold</th>
+                        <th>Selling Price</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for sale in sales_report %}
+
+                    <tr>
+                        <td>{{ sale.sale_date }}</td>
+
+                        <td>{{ sale.product_name }}</td>
+
+                        <td>{{ sale.quantity_sold }}</td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(sale.selling_price) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(sale.total_amount) }}
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5" class="empty-message">
+                            No sales records available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- DEMAND ANALYSIS REPORT -->
+
+        <h2 class="section-title">Demand Analysis Report</h2>
+
+        <div class="report-table-wrapper">
+
+            <table class="report-table">
+
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Total Units Sold</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in demand_report %}
+
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.total_demand }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="2" class="empty-message">
+                            No historical demand data available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- INVENTORY INSIGHTS -->
+
+        <h2 class="section-title">Inventory Insights</h2>
+
+        <div class="alerts-container">
+
+            {% for insight in inventory_insights %}
+
+            <div class="alert">
+
+                <span class="alert-icon">i</span>
+
+                <div>
+                    <h3>{{ insight.title }}</h3>
+                    <p>{{ insight.message }}</p>
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="insight-card">
+                No inventory insights available.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

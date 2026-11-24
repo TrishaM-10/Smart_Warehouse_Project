@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Warehouse Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+
+    {% include 'sidebar.html' %}
+
+    <main class="main-content">
+
+        <h1>Warehouse Overview</h1>
+        <p>Welcome to our Smart Warehouse Management System.</p>
+
+        <div class="dashboard-cards">
+
+            <div class="card">
+                <h3>Total Products</h3>
+                <h2>0</h2>
+                <p>Across all categories</p>
+            </div>
+
+            <div class="card">
+                <h3>Low Stock Items</h3>
+                <h2>0</h2>
+                <p>Require attention</p>
+            </div>
+
+            <div class="card">
+                <h3>Predicted Demand</h3>
+                <h2>0</h2>
+                <p>Units - Next period</p>
+            </div>
+
+            <div class="card">
+                <h3>Reorder Required</h3>
+                <h2>0</h2>
+                <p>Pending recommendations</p>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">Inventory Overview</h2>
+
+        <div class="dashboard-cards">
+
+            <div class="card">
+                <h3>Total Stock Units</h3>
+                <h2>0</h2>
+                <p>Available warehouse stock</p>
+            </div>
+
+            <div class="card">
+                <h3>Stock In</h3>
+                <h2>0</h2>
+                <p>Units received</p>
+            </div>
+
+            <div class="card">
+                <h3>Stock Out</h3>
+                <h2>0</h2>
+                <p>Units dispatched</p>
+            </div>
+
+            <div class="card">
+                <h3>Expiring Products</h3>
+                <h2>0</h2>
+                <p>Require monitoring</p>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">Recent Stock Activity</h2>
+
+        <div class="activity-card">
+            <div class="activity-header">
+                <span>Product</span>
+                <span>Movement</span>
+                <span>Quantity</span>
+                <span>Status</span>
+            </div>
+
+            <div class="activity-row">
+                <span>No stock activity yet</span>
+                <span>--</span>
+                <span>--</span>
+                <span>Waiting for records</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">Inventory Alerts</h2>
+
+        <div class="alerts-container">
+
+            <div class="alert">
+                <span class="alert-icon">!</span>
+                <div>
+                    <h3>Low Stock Alert</h3>
+                    <p>Products below minimum stock level.</p>
+                </div>
+                <span class="alert-status">Monitor</span>
+            </div>
+
+            <div class="alert">
+                <span class="alert-icon">!</span>
+                <div>
+                    <h3>Overstock Alert</h3>
+                    <p>Products with excess inventory.</p>
+                </div>
+                <span class="alert-status">Monitor</span>
+            </div>
+
+            <div class="alert">
+                <span class="alert-icon">!</span>
+                <div>
+                    <h3>Expiry Alert</h3>
+                    <p>Products approaching their expiry date.</p>
+                </div>
+                <span class="alert-status">Monitor</span>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
